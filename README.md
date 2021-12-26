@@ -6,7 +6,6 @@
 * 卓におかれたIoTベルを鳴らすことで、スタッフに呼び出しがあったことを通知する。
 
 
-
 ## 全体構成
 
 ```plantuml
@@ -27,7 +26,7 @@ rectangle outside_the_store as "店外" {
 
 }
 rectangle inside_the_store as "店内" {
-    person cast as "スタッフ"
+    person cast as "キャスト\nスタッフ"
 
     actor actor_order as "注文したいお客"
     frame bell_side as "IoT ベル" {
@@ -64,19 +63,34 @@ server <--> cloud
 
 ```
 
+## 構成要素
 
-## 利用しているハードウェア
+### 利用しているハードウェア
 
 | ハードウェア名       | 用途                                 | URL                                                          |
 | -------------------- | ------------------------------------ | ------------------------------------------------------------ |
 | Raspberry Pi 4       | 携帯サーバー 兼 タブレットの画面表示 | https://www.raspberrypi.com/products/raspberry-pi-4-model-b/ |
 | TWELITE® CUE         | ベルのシェイク検知                   | https://mono-wireless.com/jp/products/twelite-cue/index.html |
 | MONOSTICK            | TWELITE® CUEのシェイク検知を受信する | https://mono-wireless.com/jp/products/MoNoStick/index.html   |
-| Raspberry Pi用カメラ | QRコード表示                         |                                                              |
+| Raspberry Pi用カメラ | QRコードの読み取り                   | --                                                           |
+| 店内用Wifi ルーター  | 各モジュール間で連絡するためのルータ | --                                                           |
 
+
+### 利用しているソフトウェア
+
+| ソフトウェア               | 用途                                                   | URL                                     |
+| -------------------------- | ------------------------------------------------------ | --------------------------------------- |
+| ROS 2 : Foxy               | ロボットの連携させるためのソフトウェアプラットフォーム | https://docs.ros.org/en/foxy/index.html |
+| Ubuntu server 20.0.4.3 LTS | Raspberry Pi で動作させるOS                            | https://ubuntu.com/                     |
+
+
+## 特記事項
+
+本システムは**メイドロボカフェ**を運用するためにROS2をプラットフォームにして構築している。
 
 
 ## License
 
 * QRコードは(株)デンソーウェーブの登録商標です
+
 

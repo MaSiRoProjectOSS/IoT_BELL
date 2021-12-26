@@ -1,0 +1,56 @@
+html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc])
+.markdown-preview {
+    padding: 2em;
+}
+
+body {
+    counter-reset: chapter;
+}
+h2 {
+  counter-reset: sub-chapter;
+}
+h3 {
+  counter-reset: section;
+}
+h4 {
+  counter-reset: indexlist;
+}
+
+h1::before {
+  counter-reset : chapter;
+}
+
+h2::before {
+  counter-increment: chapter;
+  content: counter(chapter) ". ";
+}
+h3::before {
+  counter-increment: sub-chapter;
+  content: counter(chapter) "-" counter(sub-chapter) ". ";
+}
+h4::before {
+  counter-increment: section;
+  content: counter(chapter) "-" counter(sub-chapter)  "-" counter(section) ". ";
+}
+h5::before {
+  counter-increment: indexlist;
+  content: "(" counter(indexlist)  ") ";
+}
+
+#sidebar-toc-btn {
+  bottom: unset;
+  top: 8px;
+}
+
+h2{
+  border-bottom: 4px solid #eaecef;
+}
+h3 {
+  border-bottom: 1px solid #eaecef;
+}
+
+// Side bar TOC
+.md-sidebar-toc {
+    white-space: nowrap;
+
+}
