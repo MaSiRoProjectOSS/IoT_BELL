@@ -1,0 +1,11 @@
+{
+    "recommendations": [
+        "xaver.clang-format",
+        "streetsidesoftware.code-spell-checker",
+        "ms-vscode.cpptools",
+        "saikou9901.evilinspector",
+        "mhutchie.git-graph",
+        "jebbs.plantuml",
+        "shd101wyy.markdown-preview-enhanced"
+    ]
+}
