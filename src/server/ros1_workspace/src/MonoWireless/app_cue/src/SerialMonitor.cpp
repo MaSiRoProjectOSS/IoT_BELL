@@ -92,7 +92,6 @@ void SerialMonitor::device_read(void)
     bool        indention           = true;
     int         counter             = 2;
     if (true == this->dev_connected) {
-        // buffer
         do {
             int recv_data = read(this->dev_fd, buf, sizeof(buf));
             if (recv_data <= 0) {
@@ -132,7 +131,4 @@ void SerialMonitor::device_read(void)
             }
         } while (true == flag_repeat);
     }
-
-    // TODO : 改行なら、格納
-    // buffer_data
 }

@@ -20,7 +20,14 @@ private:
     void                                 received(char *data, int size, bool indention);
     twelite_app_cue::TWELITE_app_cue_msg convert(char *data, int size);
 
-    const std::string topic_name = "TWELITE_app_cue";
+    int convert_information(char *data, int start_index, int size, twelite_app_cue::TWELITE_app_cue_msg *msg);
+    int convert_sensor(char *data, int start_index, int size, twelite_app_cue::TWELITE_app_cue_msg *msg);
+    int convert_sensor_PAL(char *data, int start_index, int size, twelite_app_cue::TWELITE_app_cue_msg *msg);
+    int convert_sensor_TAG(char *data, int start_index, int size, twelite_app_cue::TWELITE_app_cue_msg *msg);
+
+    void DebugPrint(twelite_app_cue::TWELITE_app_cue_msg msg);
+
+    const std::string topic_name = "TWELITE/app_cue";
     ros::Publisher    publisher;
     ros::Timer        timer;
 };
