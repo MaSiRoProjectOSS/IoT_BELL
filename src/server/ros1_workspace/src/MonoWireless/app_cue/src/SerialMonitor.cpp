@@ -3,6 +3,7 @@
 
 #include <fcntl.h>
 #include <unistd.h>
+void SerialMonitor::received(char *data, int size, bool indention) {}
 
 SerialMonitor::SerialMonitor(std::string name, baudrate baud, int bits, Parity parity, int stop_bits)
 {
@@ -10,8 +11,6 @@ SerialMonitor::SerialMonitor(std::string name, baudrate baud, int bits, Parity p
     this->set_baud(baud);
     this->set_format(bits, parity, stop_bits);
 }
-void SerialMonitor::received(std::string data) {}
-
 void SerialMonitor::device_open(void)
 {
     this->dev_fd = open(this->dev_name.c_str(), O_RDWR | O_NOCTTY | O_NONBLOCK);
@@ -85,16 +84,55 @@ int SerialMonitor::device_write(std::string data)
 
 void SerialMonitor::device_read(void)
 {
-    int read_size = 0;
-    if (this->dev_connected) {
-        char buf[255]  = { 0 };
-        int  recv_data = read(this->dev_fd, buf, sizeof(buf));
-        if (recv_data > 0) {
-            read_size               = recv_data;
-            std::string recv_string = buf;
-            this->received(buf);
-        }
+    const int   BUFFER_SIZE         = 4096;
+    char        buf[BUFFER_SIZE]    = { 0 };
+    static char refill[BUFFER_SIZE] = { 0 };
+    static int  read_size           = 0;
+    bool        flag_repeat         = true;
+    bool        indention           = true;
+    int         counter             = 2;
+    if (true == this->dev_connected) {
+        // buffer
+        do {
+            int recv_data = read(this->dev_fd, buf, sizeof(buf));
+            if (recv_data <= 0) {
+                if (0 >= counter) {
+                    flag_repeat = false;
+                }
+                counter--;
+                break;
+            } else {
+                for (int i = 0; i < recv_data; i++) {
+                    if (BUFFER_SIZE <= read_size) {
+                        flag_repeat = false;
+                        indention   = false;
+                        break;
+                    } else if ('\n' == buf[i]) {
+                        flag_repeat = false;
+                        indention   = true;
+                        break;
+                    } else if ('\r' == buf[i]) {
+                        flag_repeat = false;
+                        indention   = true;
+                        break;
+                    } else {
+                        refill[read_size++] = buf[i];
+                    }
+                }
+                if (false == flag_repeat) {
+                    refill[read_size++] = '\n';
+                    this->received(refill, read_size, indention);
+                    if (false == indention) {
+                        flag_repeat = true;
+                    }
+                    read_size = 0;
+                } else {
+                    usleep(1000);
+                }
+            }
+        } while (true == flag_repeat);
     }
+
     // TODO : 改行なら、格納
     // buffer_data
 }

@@ -15,6 +15,9 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   roscpp
   rospy
+  geometry_msgs
+  nav_msgs
+  sensor_msgs
   std_msgs
 )
 
@@ -74,6 +77,9 @@ add_message_files(
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
+    geometry_msgs
+    nav_msgs
+    sensor_msgs
     std_msgs
 )
 
@@ -142,7 +148,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node
   src/app_cue_node.cpp
-  src/TWELITE_AppCue.cpp
+  src/AppCue.cpp
   src/SerialMonitor.cpp
 )
 

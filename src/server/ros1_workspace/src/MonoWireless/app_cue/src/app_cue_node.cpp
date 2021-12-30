@@ -7,7 +7,7 @@
  *               MaSiRo Project.
  *
  */
-#include "TWELITE_AppCue.h"
+#include "AppCue.h"
 
 #include <ros/ros.h>
 #include <std_msgs/String.h>
@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
     printf("===============================================================\n");
     ROS_INFO(" start : %s", TOPIC_NAME_TWELITE_APP_CUE);
     printf("===============================================================\n");
-    ros::Rate       loop_rate(1); // 1Hz
-    TWELITE_app_cue app;
+    ros::Rate loop_rate(1); // 1Hz
+    AppCue    app;
 
     app.Run(&n);
 

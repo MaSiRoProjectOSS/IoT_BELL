@@ -3,6 +3,7 @@
         {
             "name": "Linux",
             "includePath": [
+                "${workspaceFolder}/src/server/ros1_workspace/devel/include/**",
                 "${workspaceFolder}/src/server/ros2_workspace/**",
                 "${workspaceFolder}/src/server/ros2_workspace/src/MonoWireless/app_cue/src",
                 "/opt/ros/foxy/include/**"
