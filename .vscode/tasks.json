@@ -1,0 +1,51 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "ROS2 : colcon : paths",
+            "type": "shell",
+            "command": "colcon build --symlink-install --paths ${workspaceFolder}/src/server/ros2_workspace"
+        },
+        {
+            "label": "ROS2 : colcon : TWELITE : app_cue",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/src/server/ros2_workspace/ | colcon build --symlink-install --packages-select TWELITE_app_cue"
+        },
+        {
+            "label": "ROS2 : run : TWELITE_app_cue",
+            "type": "shell",
+            "command": ". /home/pi/IoT_BELL/src/server/ros2_workspace/install/local_setup.bash | ros2 run TWELITE_app_cue TWELITE_app_cue"
+        },
+        {
+            "label": "ROS1 : catkin_make",
+            "type": "shell",
+            "windows": {
+                "command": "call c:/opt/ros/melodic/x64/setup.bat",
+                "args": [
+                    "&&e:",
+                    ""
+                ],
+            },
+            "linux": {
+                "command": "${workspaceFolder}/.vscode/tools/ros1_build.sh",
+                "args": [
+                    "${workspaceFolder}/src/server/ros1_workspace"
+                ],
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "ROS1 : run : roscore",
+            "type": "shell",
+            "command": "${workspaceFolder}/.vscode/tools/ros1_start.sh",
+            "args": [
+                "${workspaceFolder}/src/server/script"
+            ]
+        }
+    ]
+}

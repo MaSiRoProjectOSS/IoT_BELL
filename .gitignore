@@ -33,3 +33,8 @@
 
 # My project
 __*
+**/install
+**/build
+**/log
+**/devel
+.vscode/pinned-files.json
