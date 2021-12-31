@@ -1,10 +1,22 @@
 {
 	"folders": [
 		{
+			"name": "IoT_BELL",
 			"path": "."
 		}
 	],
 	"settings": {
-		"markdown.extension.toc.updateOnSave": false
+		"markdown-preview-enhanced.singlePreview": false,
+		"markdown-preview-enhanced.scrollSync": true,
+		"markdown.extension.toc.updateOnSave": false,
+		"files.associations": {
+			"app_pal.h": "c"
+		},
+		"doxdocgen.file.copyrightTag": [
+			"@copyright Copyright (c) {year}-.\n              MaSiRo Project."
+		],
+		"editor.rulers": [
+			120
+		]
 	}
 }

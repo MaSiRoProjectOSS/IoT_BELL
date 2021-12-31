@@ -1,6 +1,6 @@
 # Tablet side
 
-<link rel="stylesheet" href="https://github.com/MaSiRo-Project-OSS/IoT_BELL/doc/style.less?raw=true">
+<link rel="stylesheet" href="https://github.com/MaSiRo-Project-OSS/IoT_BELL/blob/develop/doc/style.less?raw=true">
 
 ## 初期設定
 
@@ -41,6 +41,7 @@ sudo adduser $USER_NAME
 ## 権限付与
 sudo gpasswd -a $USER_NAME sudo
 sudo gpasswd -a $USER_NAME dialout
+sudo gpasswd -a $USER_NAME video
 
 ## (option)デフォルトユーザの削除
 sudo userdel -r ubuntu
@@ -56,6 +57,7 @@ sudo adduser $USER_NAME
 
 ## 権限付与
 sudo gpasswd -a $USER_NAME dialout
+sudo gpasswd -a $USER_NAME video
 
 ## (option)デフォルトユーザの削除
 sudo userdel -r ubuntu
@@ -102,6 +104,50 @@ sudo apt -y install lightdm
 ROS2の[Installing ROS 2 via Debian Packages](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)を基にインストールしてください。
 
 * ROSのインストール方法については時期によって手順が変わるため最新のサイトをご確認ください。
+
+#### カメラの設定
+
+カメラケーブルでカメラの接続設定を行う。
+
+```bash
+sudo apt install -y libv4l-dev v4l-utils
+sudo apt install libraspberrypi-bin
+```
+
+カメラを認識させるために```/boot/firmware/config.txt```に下記の設定を追記する
+
+* config.txtに"usercfg.txt"に追加してくださいと追記されるが動作しないとのことなので"config.txt"に記載する。
+
+```text
+[all]
+start_x=1
+gpu_mem=128
+```
+
+上記の設定が完了したら```sudo reboot```で再起動を行う。
+再起動後```/dev/video0```が追加される。
+
+下記のコマンドでカメラが認識しているか確認する。
+認識しない場合はカメラケーブルの向きを間違えたなどが考えられる。
+
+```bash
+v4l2-ctl --list-devices
+```
+
+下記のコマンドで３秒後に撮影出来るかテストする
+
+```bash
+raspistill -t 3000 -o ~/image.jpg
+```
+
+#### ラズパイ用toolのインストール
+
+GPIO操作するため下記コマンドでtoolsをインストールする
+
+```bash
+sudo apt install linux-tools-raspi
+sudo apt install pigpio-tools
+```
 
 #### その他
 
