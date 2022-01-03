@@ -2,24 +2,26 @@
 
 <link rel="stylesheet" href="https://github.com/MaSiRo-Project-OSS/IoT_BELL/blob/develop/doc/style.less?raw=true">
 
+<div style="float: right">作成日:2021/12/26</div>
+
 ## 初期設定
 
-### 起動用SDカードの準備
 
-「Raspberry Pi Imager」をつかって「Ubuntu server 20.0.4.3 LTS」をインストールする。
+### 起動用SDカードの作成
 
-* ROSを動かすため2021/12/26時点でサポートしている「Ubuntu server 20.0.4.3 LTS」を選択している。
-
+1. "Raspberry Pi"の起動用SDカードを作成します。
+作成には「[Raspberry Pi Imager](https://www.raspberrypi.com/software/)」を使用しますので公式よりダウンロードしてください。
+2. 「Raspberry Pi Imager」のOperating Systemには、"Other geneal purpose OS"->"Ubuntu"->"Ubuntu server 20.04.3 LTS(RPi 2/3/4/400)"を選択し、SDカードに書き込んでください。
+    * ROSを動かすため2021/12/26時点でサポートしている「Ubuntu server 20.0.4.3 LTS」を選択している。
 
 ### Raspberry Piの設定
 
-「Raspberry Pi Imager」を使ってSDカードを作成した場合は、2021/12/26時点では下記になります。
-**後述する設定で変更**してください。
+起動時のUbuntu serverの初期ユーザ名と初期パスワードは下記になります。**後述する設定で変更**してください。
 
-| 項目         | 値     |
-| ------------ | ------ |
-| 初期ユーザ名 | ubuntu |
-| 初期パス     | ubuntu |
+| 項目           | 値     |
+| -------------- | ------ |
+| 初期ユーザ名   | ubuntu |
+| 初期パスワード | ubuntu |
 
 #### ホスト名を変更する
 
@@ -33,9 +35,9 @@ hostnamectl set-hostname $CHANGE_HOSTNAME
 ##### 管理者用のアカウント作成
 
 ```bash
-USER_NAME=作成したい管理者用アカウント名
+USER_NAME=作成したい管理者用アカウント名(小文字であること)
 
-## ユーザー名を変更
+## ユーザー名を追加
 sudo adduser $USER_NAME
 
 ## 権限付与
@@ -43,8 +45,9 @@ sudo gpasswd -a $USER_NAME sudo
 sudo gpasswd -a $USER_NAME dialout
 sudo gpasswd -a $USER_NAME video
 
-## (option)デフォルトユーザの削除
-sudo userdel -r ubuntu
+## パスワード変更
+su $USER_NAME
+passwd
 ```
 
 ##### 店内稼働用アカウントの作成
@@ -52,17 +55,26 @@ sudo userdel -r ubuntu
 ```bash
 USER_NAME=作成したい店内稼働用アカウント名
 
-## ユーザー名を変更
-sudo adduser $USER_NAME
+## ユーザー名を追加
+sudo adduser $USER_NAME(小文字であること)
 
 ## 権限付与
 sudo gpasswd -a $USER_NAME dialout
 sudo gpasswd -a $USER_NAME video
 
-## (option)デフォルトユーザの削除
-sudo userdel -r ubuntu
+## パスワード変更
+su $USER_NAME
+passwd
 ```
 
+##### (option)デフォルトユーザの削除
+
+上記のアカウントを作成しログインが確認できたならば、**初期アカウントの削除することをお勧めします**。
+
+```bash
+## デフォルトユーザの削除
+sudo userdel -r ubuntu
+```
 
 #### wifiの設定
 
@@ -96,23 +108,85 @@ network:
 ```bash
 apt update
 apt upgrade
+
+# ディスプレイマネージャーlightdmのインストール
 sudo apt -y install lightdm
+
+# 起動時にGUIを起動するように設定
+sudo systemctl set-default graphical.target
+sudo reboot
 ```
+
+#### Raspberry Pi用toolのインストール
+
+GPIO操作するため下記コマンドでtoolsをインストールする
+
+```bash
+sudo echo "deb http://archive.raspberrypi.org/debian/ buster main" >> /etc/apt/sources.list
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 7FA3303E
+sudo apt update
+sudo apt install -y raspi-config
+
+sudo apt install -y libv4l-dev v4l-utils
+sudo apt install -y libraspberrypi-bin
+sudo apt install -y linux-tools-raspi
+sudo apt install -y pigpio-tools
+```
+
+##### Raspberry Piの設定を行う
+
+下記のコマンドから日時設定やキーボード設定などを行ってください。
+
+```bash
+sudo raspi-config
+```
+
 
 #### ROS2のインストール
 
-ROS2の[Installing ROS 2 via Debian Packages](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)を基にインストールしてください。
+ROS2の[Installing ROS 2 on Ubuntu Linux](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Binary.html)を基にインストールしてください。
 
 * ROSのインストール方法については時期によって手順が変わるため最新のサイトをご確認ください。
 
-#### カメラの設定
+
+
+
+### その他
+
+* SSHの接続環境を作成しパスワードで入れないようにするのがおススメです。
+* gitにアクセスする場合はアカウント設定を行ってください。
+```bash
+git config --global user.email "メールアドレス"
+git config --global user.name "ユーザ名"
+```
+
+
+---
+
+## システム改変のため保留項目
+
+
+
+### スクリーンセイバーをOFFにする
+
+画面がOFFにならないようにスクリーンセイバーをインスールし無効にする。
+
+```bash
+sudo apt-get install xscreensaver
+```
+
+上記の「xscreensaver」をインスールしたら```/etc/lightdm/lightdm.conf```に下記の内容を追記する。
+
+```text
+[SeatDefaults]
+xserver-command=X -s 0 -dpms
+```
+
+
+### カメラの設定
 
 カメラケーブルでカメラの接続設定を行う。
 
-```bash
-sudo apt install -y libv4l-dev v4l-utils
-sudo apt install libraspberrypi-bin
-```
 
 カメラを認識させるために```/boot/firmware/config.txt```に下記の設定を追記する
 
@@ -139,18 +213,3 @@ v4l2-ctl --list-devices
 ```bash
 raspistill -t 3000 -o ~/image.jpg
 ```
-
-#### ラズパイ用toolのインストール
-
-GPIO操作するため下記コマンドでtoolsをインストールする
-
-```bash
-sudo apt install linux-tools-raspi
-sudo apt install pigpio-tools
-```
-
-#### その他
-
-SSHの接続環境を作成しパスワードで入れないようにするのがおススメです。
-
-
