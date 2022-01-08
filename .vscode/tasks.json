@@ -10,6 +10,10 @@
             "args": [
                 "${workspaceFolder}/src/server/ros2_workspace"
             ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         },
         {
             "label": "ROS2 : colcon : server : twelite_app_cue",
@@ -18,40 +22,32 @@
             "args": [
                 "${workspaceFolder}/src/server/ros2_workspace",
                 "twelite_app_cue"
-            ],
+            ]
         },
         {
             "label": "ROS2 : run : TWELITE_app_cue",
             "type": "shell",
-            "command": "ros2 run twelite_app_cue twelite_app_cue_node"
+            "command": "${workspaceFolder}/.vscode/tools/ros2_run.sh",
+            "args": [
+                "${workspaceFolder}/src/server/ros2_workspace",
+                "twelite_app_cue",
+                "twelite_app_cue_node"
+            ]
         },
         {
             "label": "ROS1 : catkin_make",
             "type": "shell",
-            "windows": {
-                "command": "call c:/opt/ros/melodic/x64/setup.bat",
-                "args": [
-                    "&&e:",
-                    ""
-                ],
-            },
-            "linux": {
-                "command": "${workspaceFolder}/.vscode/tools/ros1_build.sh",
-                "args": [
-                    "${workspaceFolder}/src/server/ros1_workspace"
-                ],
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
+            "command": "${workspaceFolder}/.vscode/tools/ros1_build.sh",
+            "args": [
+                "${workspaceFolder}/src/server/ros1_workspace"
+            ]
         },
         {
             "label": "ROS1 : run : roscore",
             "type": "shell",
             "command": "${workspaceFolder}/.vscode/tools/ros1_start.sh",
             "args": [
-                "${workspaceFolder}/src/server/script"
+                "${workspaceFolder}/src/server/ros1_workspace"
             ]
         }
     ]

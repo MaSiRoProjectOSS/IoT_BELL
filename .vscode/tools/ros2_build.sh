@@ -31,9 +31,9 @@ then
         cd ${WORK_FOLDER}
 
         source /usr/share/colcon_cd/function/colcon_cd.sh
-        export _colcon_cd_root=/opt/ros/foxy/
+        export _colcon_cd_root=/opt/ros/${ROS_DISTRO}/
         source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
-        source /opt/ros/foxy/setup.bash
+        source /opt/ros/${ROS_DISTRO}/setup.bash
 
         echo -e "========================================"
         echo -e "Folder : ${WORK_FOLDER}"

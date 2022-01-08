@@ -24,6 +24,11 @@
         "cpplint",
         "GNUCXX",
         "Wextra",
-        "rosrun"
+        "rosrun",
+        "EEPROM",
+        "ADXL",
+        "stoi",
+        "SHTC",
+        "SHT"
     ]
 }

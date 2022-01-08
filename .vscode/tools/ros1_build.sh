@@ -27,7 +27,7 @@ if [ ! -z "${WORK_FOLDER}" ]
         then
             cd ${WORK_FOLDER}
 
-            source /opt/ros/noetic/setup.bash
+            source /opt/ros/${ROS_DISTRO}/setup.bash
             echo -e "========================================"
             echo -e "Folder : ${WORK_FOLDER}"
             echo -e "========================================"
