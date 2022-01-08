@@ -23,7 +23,7 @@
         {
             "label": "ROS2 : run : TWELITE_app_cue",
             "type": "shell",
-            "command": "ros2 run TWELITE_app_cue TWELITE_app_cue"
+            "command": "ros2 run twelite_app_cue twelite_app_cue_node"
         },
         {
             "label": "ROS1 : catkin_make",

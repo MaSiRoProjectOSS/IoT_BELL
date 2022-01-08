@@ -9,6 +9,17 @@ COLOR_OFF="\e[m"
 
 WORK_FOLDER=$1
 
+if [ "ros_noetic" != "ros_${ROS_DISTRO}" ];
+then
+    if [ "ros_melodic" != "ros_${ROS_DISTRO}" ];
+    then
+        echo -e "${COLOR_ON_RED}========================================${COLOR_OFF}"
+        echo -e "${COLOR_ON_RED}  Not support Distributions : ${ROS_DISTRO}.${COLOR_OFF}"
+        echo -e "${COLOR_ON_RED}========================================${COLOR_OFF}"
+        exit 1
+    fi
+fi
+
 if [ ! -z "${WORK_FOLDER}" ]
 then
     if [ -d "${WORK_FOLDER}" ]
@@ -31,11 +42,3 @@ else
     echo -e "${COLOR_ON_RED}  Specify a folder as the argument.${COLOR_OFF}"
     echo -e "${COLOR_ON_RED}========================================${COLOR_OFF}"
 fi
-
-
-
-
-
-
-
-
