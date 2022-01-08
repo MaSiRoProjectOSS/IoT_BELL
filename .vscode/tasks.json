@@ -4,19 +4,26 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "ROS2 : colcon : paths",
+            "label": "ROS2 : colcon : server : ALL",
             "type": "shell",
-            "command": "colcon build --symlink-install --paths ${workspaceFolder}/src/server/ros2_workspace"
+            "command": "${workspaceFolder}/.vscode/tools/ros2_build.sh",
+            "args": [
+                "${workspaceFolder}/src/server/ros2_workspace"
+            ],
         },
         {
-            "label": "ROS2 : colcon : TWELITE : app_cue",
+            "label": "ROS2 : colcon : server : twelite_app_cue",
             "type": "shell",
-            "command": "cd ${workspaceFolder}/src/server/ros2_workspace/ | colcon build --symlink-install --packages-select TWELITE_app_cue"
+            "command": "${workspaceFolder}/.vscode/tools/ros2_build.sh",
+            "args": [
+                "${workspaceFolder}/src/server/ros2_workspace",
+                "twelite_app_cue"
+            ],
         },
         {
             "label": "ROS2 : run : TWELITE_app_cue",
             "type": "shell",
-            "command": ". /home/pi/IoT_BELL/src/server/ros2_workspace/install/local_setup.bash | ros2 run TWELITE_app_cue TWELITE_app_cue"
+            "command": "ros2 run TWELITE_app_cue TWELITE_app_cue"
         },
         {
             "label": "ROS1 : catkin_make",

@@ -11,7 +11,6 @@
 
 ```bash
 sudo apt install -y  openjdk-17-jre doxygen graphviz
+sudo apt install -y clang
+sudo apt install -y clang-format
 ```
-
-
-

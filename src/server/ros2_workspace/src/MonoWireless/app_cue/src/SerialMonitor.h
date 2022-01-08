@@ -1,14 +1,19 @@
+/**
+ * @file SerialMonitor.h
+ * @brief SerialMonitor for Linux
+ * @date 2022-01-08
+ * 
+ * @copyright Copyright (c) 2022-.
+ *               MaSiRo Project.
+ * 
+ */
 
 #ifndef _SERIAL_MONITOR_H_
 #define _SERIAL_MONITOR_H_
 
 #include <chrono>
 #include <memory>
-#include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/string.hpp>
 #include <termios.h>
-
-using namespace std::chrono_literals;
 
 class SerialMonitor {
 public:
@@ -22,25 +27,17 @@ public:
     };
     enum baudrate
     {
-        BaudRate_57K_600  = B57600,
-        BaudRate_115K_200 = B115200,
-        BaudRate_23K_400  = B230400,
-        BaudRate_460K_800 = B460800,
-        BaudRate_500K     = B500000,
-        BaudRate_576K     = B576000,
-        BaudRate_921_K600 = B921600,
-        BaudRate_1M       = B1000000,
-        BaudRate_1M_152K  = B1152000,
-        BaudRate_1M_500K  = B1500000,
-        BaudRate_2M       = B2000000,
-        BaudRate_2M_500K  = B2500000,
-        BaudRate_3M       = B3000000,
-        BaudRate_3M_500K  = B3500000,
-        BaudRate_4M       = B4000000,
+        BaudRate_57600  = B57600,
+        BaudRate_115200 = B115200,
+        BaudRate_230400 = B230400,
+        BaudRate_460800 = B460800,
+        BaudRate_500000 = B500000,
+        BaudRate_576000 = B576000,
+        BaudRate_921600 = B921600,
     };
 
 public:
-    SerialMonitor(std::string name = "/dev/ttyUSB0", baudrate baud = BaudRate_1M_152K, int bits = 8, Parity parity = Parity::None, int stop_bits = 1) {}
+    SerialMonitor(std::string name = "/dev/ttyUSB0", baudrate baud = BaudRate_115200, int bits = 8, Parity parity = Parity::None, int stop_bits = 1);
 
     void device_open(void);
     bool is_connected(void);
@@ -58,7 +55,7 @@ public:
     void monitor(void);
 
 private:
-    virtual void received(std::string data);
+    virtual void received(char *data, int size, bool indention);
 
     int dev_fd = -1;
 
@@ -67,7 +64,7 @@ private:
     bool        dev_connected;
     int         dev_bits;
     int         dev_stop_bits;
-    baudrate    dev_baud         ;
+    baudrate    dev_baud;
     char        buffer_data[255] = { 0 };
     int         buffer_index     = 0;
 };
