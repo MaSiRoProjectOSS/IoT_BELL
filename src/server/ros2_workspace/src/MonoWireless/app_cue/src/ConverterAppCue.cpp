@@ -11,9 +11,9 @@
 #include "ConverterAppCue.h"
 
 // ==================================================== //
-#define SERIALMONITOR_DEBUG 1
+#define CONVERTERAPPCUE_DEBUG 1
 /* **************************************************** */
-#if SERIALMONITOR_DEBUG
+#if CONVERTERAPPCUE_DEBUG
 #include <cstdio>
 #define debug_printf(...) printf(__VA_ARGS__)
 #else
@@ -29,42 +29,35 @@
  * @brief Construct a new twelite app cue::twelite app cue object
  *
  */
-ConverterAppCue::ConverterAppCue()
-{
-    debug_printf("%s() : Construct\n", __func__);
-}
+ConverterAppCue::ConverterAppCue() {}
 
 /**
  * @brief Destroy the twelite app cue::twelite app cue object
  *
  */
-ConverterAppCue::~ConverterAppCue()
-{
-    debug_printf("%s() : Destroy\n", __func__);
-}
+ConverterAppCue::~ConverterAppCue() {}
 
-#if 0
 /* **************************************************** */
 // PRIVATE
 /* **************************************************** */
-int ConverterAppCue::convert_information(char *data, int start_index, int size, twelite_app_cue::TWELITE_app_cue_msg *msg)
+int ConverterAppCue::convert_information(char *data, int start_index, int size, twelite_interfaces::msg::TweliteAppCueMsg *msg)
 {
     if (start_index < size) {
-        msg->RouterSID.data    = (data[0] << 24u) + (data[1] << 16u) + (data[2] << 8u) + (data[3]);
-        msg->LQI.data          = (((7.0 * data[4]) - 1970.0) / 20.0);
-        msg->Header.seq        = (data[5] << 8u) + (data[6]);
-        msg->EndDeviceSID.data = (data[7] << 24u) + (data[8] << 16u) + (data[9] << 8u) + (data[10]);
-        msg->LogicalID.data    = data[11];
+        msg->router_sid.data = (data[0] << 24u) + (data[1] << 16u) + (data[2] << 8u) + (data[3]);
+        msg->lqi.data        = (((7.0 * data[4]) - 1970.0) / 20.0);
+        //msg->header->seq          = (data[5] << 8u) + (data[6]); // seq in not missing for ROS2
+        msg->end_device_sid.data = (data[7] << 24u) + (data[8] << 16u) + (data[9] << 8u) + (data[10]);
+        msg->logical_id.data     = data[11];
     }
     return 11;
 }
-int ConverterAppCue::convert_sensor(char *data, int start_index, int size, twelite_app_cue::TWELITE_app_cue_msg *msg)
+int ConverterAppCue::convert_sensor(char *data, int start_index, int size, twelite_interfaces::msg::TweliteAppCueMsg *msg)
 {
     const int TARGET_INDEX = 12;
     int result             = TARGET_INDEX + 1;
     if (start_index < size) {
         if (TARGET_INDEX < size) {
-            msg->Sensor.data = data[TARGET_INDEX];
+            msg->sensor.data = data[TARGET_INDEX];
             if (0x80 == data[TARGET_INDEX]) {
                 // PAL
                 result = this->convert_sensor_PAL(data, result, size, msg);
@@ -76,14 +69,14 @@ int ConverterAppCue::convert_sensor(char *data, int start_index, int size, tweli
     }
     return result;
 }
-int ConverterAppCue::convert_sensor_PAL(char *data, int start_index, int size, twelite_app_cue::TWELITE_app_cue_msg *msg)
+int ConverterAppCue::convert_sensor_PAL(char *data, int start_index, int size, twelite_interfaces::msg::TweliteAppCueMsg *msg)
 {
     int index = start_index;
     if (start_index < size) {
         debug_printf("==== PAL[%d]\n", data[index]);
-        msg->PAL.data     = data[index] & 0x1F;
+        msg->pal.data     = data[index] & 0x1F;
         int version       = (data[index] & 0xE0) >> 5;
-        msg->Version.data = ((version & 0x01) << 2) | (version & 0x02) | ((version & 0x04) >> 2);
+        msg->version.data = ((version & 0x01) << 2) | (version & 0x02) | ((version & 0x04) >> 2);
         index++;
         int sensor_num = data[index++];
         debug_printf("==== sensor_num[%d]\n", sensor_num);
@@ -123,7 +116,7 @@ int ConverterAppCue::convert_sensor_PAL(char *data, int start_index, int size, t
             switch (__SensorID) {
                 case 0x00:
                     debug_printf(" ==== %s\n", "Magnet");
-                    msg->Magnet.data = data[index] & 0x7F;
+                    msg->magnet.data = data[index] & 0x7F;
                     break;
                 case 0x01:
                     debug_printf(" ==== %s\n", "Temperature");
@@ -142,27 +135,27 @@ int ConverterAppCue::convert_sensor_PAL(char *data, int start_index, int size, t
                     break;
                 case 0x04:
                     debug_printf(" ==== %s\n", "Acceleration");
-                    msg->Accel_Sampling.data = 0;
+                    msg->accel_sampling.data = 0;
                     /*
-                    msg->Accel_X.data        = 0;
-                    msg->Accel_Y.data        = 0;
-                    msg->Accel_Z.data        = 0;
+                    msg->accel_x.data        = 0;
+                    msg->accel_y.data        = 0;
+                    msg->accel_z.data        = 0;
                     */
                     break;
                 case 0x05:
                     debug_printf(" ==== %s\n", "EventID");
-                    msg->EventID.data = data[index];
+                    msg->event_id.data = data[index];
                     break;
                 case 0x30:
                     if (0x08 == __ExByte) {
                         debug_printf(" ==== %s\n", "Power");
-                        msg->Power.data = ((data[index] << 8) + (data[index + 1]));
+                        msg->power.data = ((data[index] << 8) + (data[index + 1]));
                     } else if (0x00 == __ExByte) {
                         debug_printf(" ==== %s\n", "ADC");
-                        //msg->ADC.data = ((data[index] << 8) + (data[index + 1]));
+                        //msg->adc.data = ((data[index] << 8) + (data[index + 1]));
                     } else {
                         debug_printf(" ==== %s%d\n", "ADC", __ExByte);
-                        msg->ADC.data = ((data[index] << 8) + (data[index + 1]));
+                        msg->adc.data = ((data[index] << 8) + (data[index + 1]));
                     }
                     break;
                 case 0x31:
@@ -186,7 +179,7 @@ int ConverterAppCue::convert_sensor_PAL(char *data, int start_index, int size, t
     }
     return index;
 }
-int ConverterAppCue::convert_sensor_TAG(char *data, int start_index, int size, twelite_app_cue::TWELITE_app_cue_msg *msg)
+int ConverterAppCue::convert_sensor_TAG(char *data, int start_index, int size, twelite_interfaces::msg::TweliteAppCueMsg *msg)
 {
     // TODO: Set data
     if (start_index < size) {}
@@ -196,9 +189,9 @@ int ConverterAppCue::convert_sensor_TAG(char *data, int start_index, int size, t
 //////////////////////////////////////////////////////////
 // PUBLIC
 //////////////////////////////////////////////////////////
-twelite_app_cue::TWELITE_app_cue_msg ConverterAppCue::Convert(char *data, int size)
+twelite_interfaces::msg::TweliteAppCueMsg ConverterAppCue::Convert(const char *data, int size)
 {
-    twelite_app_cue::TWELITE_app_cue_msg msg;
+    twelite_interfaces::msg::TweliteAppCueMsg msg;
 
     int refill_size = 0;
     char temp[0x0FFF];
@@ -228,7 +221,7 @@ twelite_app_cue::TWELITE_app_cue_msg ConverterAppCue::Convert(char *data, int si
         int start_index = this->convert_information(temp, 0, refill_size, &msg);
         this->convert_sensor(temp, start_index, refill_size, &msg);
     }
-#if SERIALMONITOR_DEBUG
+#if CONVERTERAPPCUE_DEBUG
     this->DebugPrint(msg);
 #endif
     return msg;
@@ -237,22 +230,22 @@ twelite_app_cue::TWELITE_app_cue_msg ConverterAppCue::Convert(char *data, int si
 /* **************************************************** */
 // debug
 /* **************************************************** */
-void ConverterAppCue::DebugPrint(twelite_app_cue::TWELITE_app_cue_msg msg)
+void ConverterAppCue::DebugPrint(twelite_interfaces::msg::TweliteAppCueMsg msg)
 {
     log_printf("==============\n");
-    log_printf("LogicalID    : %d\n", msg.LogicalID.data);
+    log_printf("LogicalID    : %d\n", msg.logical_id.data);
     log_printf("Header       : \n");
-    log_printf("       seq   : %d\n", msg.Header.seq);
-    log_printf("EndDeviceSID : %08X\n", msg.EndDeviceSID.data);
-    switch (msg.RouterSID.data) {
+    //    log_printf("       seq   : %d\n", msg.header.seq);
+    log_printf("EndDeviceSID : %08X\n", msg.end_device_sid.data);
+    switch (msg.router_sid.data) {
         case 0x80000000u:
             log_printf("RouterSID    : %s\n", "No Relay");
             break;
         default:
-            log_printf("RouterSID    : %08X\n", msg.RouterSID.data);
+            log_printf("RouterSID    : %08X\n", msg.router_sid.data);
             break;
     }
-    switch (msg.Sensor.data) {
+    switch (msg.sensor.data) {
         case msg.TWELITE_SENSOR_ANALOG:
             log_printf("Sensor       : %s\n", "Analog");
             break;
@@ -308,8 +301,8 @@ void ConverterAppCue::DebugPrint(twelite_app_cue::TWELITE_app_cue_msg msg)
             log_printf("Sensor       : %s\n", "unknow");
             break;
     }
-    log_printf("     Version : %d\n", msg.Version.data);
-    switch (msg.PAL.data) {
+    log_printf("     Version : %d\n", msg.version.data);
+    switch (msg.pal.data) {
         case msg.TWELITE_PAL_OPEN_CLOSE_PAL:
             log_printf("PAL ID       : %s\n", "OPEN-CLOSE PAL");
             break;
@@ -332,10 +325,10 @@ void ConverterAppCue::DebugPrint(twelite_app_cue::TWELITE_app_cue_msg msg)
             log_printf("PAL ID       : %s\n", "unknow");
             break;
     }
-    log_printf("LQI          : %5.2f [dBm]\n", msg.LQI.data);
-    log_printf("Power        : %d [mV]\n", msg.Power.data);
-    log_printf("ADC          : %d [mV]\n", msg.ADC.data);
-    switch (msg.EventID.data) {
+    log_printf("LQI          : %5.2f [dBm]\n", msg.lqi.data);
+    log_printf("Power        : %d [mV]\n", msg.power.data);
+    log_printf("ADC          : %d [mV]\n", msg.adc.data);
+    switch (msg.event_id.data) {
         case msg.TWELITE_EVENT_DICE_1:
             log_printf("EventID      : %s\n", "Dice1");
             break;
@@ -364,7 +357,7 @@ void ConverterAppCue::DebugPrint(twelite_app_cue::TWELITE_app_cue_msg msg)
             log_printf("EventID      : %s\n", "unknow");
             break;
     }
-    switch (msg.Magnet.data) {
+    switch (msg.magnet.data) {
         case msg.TWELITE_MAGNET_OPEN:
             log_printf("Magnet       : %s\n", "Open");
             break;
@@ -378,11 +371,9 @@ void ConverterAppCue::DebugPrint(twelite_app_cue::TWELITE_app_cue_msg msg)
             log_printf("Magnet       : %s\n", "unknow");
             break;
     }
-    log_printf("Accel        : \n");
-    log_printf("    X        : \n");
-    log_printf("    Y        : \n");
-    log_printf("    Z        : \n");
-    log_printf("    Sampling : \n");
-
+    log_printf("Accel\n");
+    log_printf("    X        : -- [mG]\n");
+    log_printf("    Y        : -- [mG]\n");
+    log_printf("    Z        : -- [mG]\n");
+    log_printf("    Sampling : -- [Hz]\n");
 }
-#endif

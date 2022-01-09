@@ -6,6 +6,7 @@
                 "${workspaceFolder}/src/server/ros1_workspace/devel/include/**",
                 "${workspaceFolder}/src/server/ros2_workspace/**",
                 "${workspaceFolder}/src/server/ros2_workspace/src/MonoWireless/app_cue/src",
+                "${workspaceFolder}/src/server/ros2_workspace/install/twelite_app_cue/include",
                 "/opt/ros/foxy/include/**",
                 "/opt/ros/galactic/include/**"
             ],

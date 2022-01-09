@@ -12,9 +12,9 @@
 #include "rclcpp/rclcpp.hpp"
 
 // ==================================================== //
-#define SERIALMONITOR_DEBUG 1
+#define TWELITE_APP_CUE_MAIN_DEBUG 1
 /* **************************************************** */
-#if SERIALMONITOR_DEBUG
+#if TWELITE_APP_CUE_MAIN_DEBUG
 #define debug_printf(...) printf(__VA_ARGS__)
 #else
 #define debug_printf(...)

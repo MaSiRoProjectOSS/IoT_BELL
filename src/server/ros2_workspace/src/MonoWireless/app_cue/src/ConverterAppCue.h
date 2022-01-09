@@ -10,29 +10,28 @@
 #ifndef _CONVERTOR_APP_CUE_H_
 #define _CONVERTOR_APP_CUE_H_
 
-//#include "twelite_app_cue/TWELITE_app_cue_msg.h"
+#include "rclcpp/rclcpp.hpp"
+#include "twelite_interfaces/msg/twelite_app_cue_msg.hpp"
 
 class ConverterAppCue {
 public:
     ConverterAppCue();
     ~ConverterAppCue();
 
-#if 0
-    twelite_app_cue::TweliteAppCueMsg Convert(char *data, int size);
+    twelite_interfaces::msg::TweliteAppCueMsg Convert(const char *data, int size);
 
 private:
     /* **************************************************** */
     // converter
     /* **************************************************** */
-    int convert_information(char *data, int start_index, int size, twelite_app_cue::TWELITE_app_cue_msg *msg);
-    int convert_sensor(char *data, int start_index, int size, twelite_app_cue::TWELITE_app_cue_msg *msg);
-    int convert_sensor_PAL(char *data, int start_index, int size, twelite_app_cue::TWELITE_app_cue_msg *msg);
-    int convert_sensor_TAG(char *data, int start_index, int size, twelite_app_cue::TWELITE_app_cue_msg *msg);
+    int convert_information(char *data, int start_index, int size, twelite_interfaces::msg::TweliteAppCueMsg *msg);
+    int convert_sensor(char *data, int start_index, int size, twelite_interfaces::msg::TweliteAppCueMsg *msg);
+    int convert_sensor_PAL(char *data, int start_index, int size, twelite_interfaces::msg::TweliteAppCueMsg *msg);
+    int convert_sensor_TAG(char *data, int start_index, int size, twelite_interfaces::msg::TweliteAppCueMsg *msg);
 
     /* **************************************************** */
     // debug
     /* **************************************************** */
-    void DebugPrint(twelite_app_cue::TWELITE_app_cue_msg msg);
-#endif
+    void DebugPrint(twelite_interfaces::msg::TweliteAppCueMsg msg);
 };
 #endif

@@ -16,9 +16,9 @@
 #include <string>
 
 // ==================================================== //
-#define SERIALMONITOR_DEBUG 1
+#define TWELITE_APP_CUE_DEBUG 0
 /* **************************************************** */
-#if SERIALMONITOR_DEBUG
+#if TWELITE_APP_CUE_DEBUG
 #define debug_printf(...) printf(__VA_ARGS__)
 #else
 #define debug_printf(...)
@@ -41,7 +41,7 @@ void TWELITE_app_cue::timer_callback()
         if (true == this->monitor.device_read(&outdata, &one_sentence)) {
             if (true == one_sentence) {
                 debug_printf("%s() : received [%ld][%s]\n", __func__, outdata.size(), outdata.c_str());
-                // this->appcue.Convert(outdata.c_str(), outdata.size());
+                twelite_interfaces::msg::TweliteAppCueMsg msg = this->appcue.Convert(outdata.c_str(), outdata.size());
             }
         }
     } else {
@@ -49,10 +49,10 @@ void TWELITE_app_cue::timer_callback()
             this->counter = this->TIMEOUT_COUNTER;
             this->monitor.device_close();
             this->monitor.device_open();
-            debug_printf("%s() : device open\n", __func__);
+            debug_printf("%s : device open\n", TWELITE_app_cue);
         } else {
             this->counter--;
-            debug_printf("%s() : device missing\n", __func__);
+            debug_printf("%s : device missing\n", TWELITE_app_cue);
         }
     }
 }

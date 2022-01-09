@@ -25,6 +25,15 @@
             ]
         },
         {
+            "label": "ROS2 : colcon : server : twelite_interfaces",
+            "type": "shell",
+            "command": "${workspaceFolder}/.vscode/tools/ros2_build.sh",
+            "args": [
+                "${workspaceFolder}/src/server/ros2_workspace",
+                "twelite_interfaces"
+            ]
+        },
+        {
             "label": "ROS2 : run : TWELITE_app_cue",
             "type": "shell",
             "command": "${workspaceFolder}/.vscode/tools/ros2_run.sh",
@@ -32,6 +41,15 @@
                 "${workspaceFolder}/src/server/ros2_workspace",
                 "twelite_app_cue",
                 "twelite_app_cue_node"
+            ]
+        },
+        {
+            "label": "ROS2 : interface : TWELITE_app_cue",
+            "type": "shell",
+            "command": "${workspaceFolder}/.vscode/tools/ros2_interface.sh",
+            "args": [
+                "${workspaceFolder}/src/server/ros2_workspace",
+                "twelite_app_cue/msg/TweliteAppCueMsg"
             ]
         },
         {

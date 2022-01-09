@@ -84,13 +84,13 @@ void SerialMonitor::device_open(void)
             //store configuration
             tcsetattr(this->dev_fd, TCSANOW, &conf_tio);
 
-            debug_printf("%s() : device open : \"%s\" %s bps-data %d bit-%s-stop %d bit\n",
-                         __func__,
-                         this->dev_name.c_str(),
-                         this->textBaudrate(this->dev_baud).c_str(),
-                         this->dev_bits,
-                         this->textParity(this->dev_parity).c_str(),
-                         this->dev_stop_bits);
+            debug_printf("%s()\n", __func__);
+            log_printf("open device : \"%s\" %s/bps/data %d bit/%s/stop %d bit\n",
+                       this->dev_name.c_str(),
+                       this->textBaudrate(this->dev_baud).c_str(),
+                       this->dev_bits,
+                       this->textParity(this->dev_parity).c_str(),
+                       this->dev_stop_bits);
 
         } else {
             this->dev_connected = false;
@@ -109,7 +109,7 @@ void SerialMonitor::device_close(void)
         close(this->dev_fd);
         this->dev_fd = -1;
     }
-    debug_printf("%s() : device close\n", __func__);
+    debug_printf("%s()\n", __func__);
 
     this->dev_connected = false;
 }

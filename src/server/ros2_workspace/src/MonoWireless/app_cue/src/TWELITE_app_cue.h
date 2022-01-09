@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef _APP_CUE_H_
-#define _APP_CUE_H_
+#ifndef _TWELITE_APP_CUE_H_
+#define _TWELITE_APP_CUE_H_
 
 #include "ConverterAppCue.h"
 #include "SerialMonitor.h"

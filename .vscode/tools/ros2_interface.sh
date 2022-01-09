@@ -8,7 +8,7 @@ COLOR_OFF="\e[m"
 ## ================================
 
 WORK_FOLDER=$1
-PACKAGES_SELECT=$2
+MSG_NAME=$2
 
 if [ "ros_galactic" != "ros_${ROS_DISTRO}" ];
 then
@@ -34,21 +34,12 @@ then
         export _colcon_cd_root=/opt/ros/${ROS_DISTRO}/
         source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
         source /opt/ros/${ROS_DISTRO}/setup.bash
-
-        MAKEFLAGS=-j2
+        source ${WORK_FOLDER}/install/setup.bash
 
         echo -e "========================================"
-        echo -e "Folder : ${WORK_FOLDER}"
-        if [ ! -z "${PACKAGES_SELECT}" ]
-        then
-            echo -e "  colcon build --symlink-install --packages-select ${PACKAGES_SELECT}"
-            echo -e "========================================"
-            colcon build --symlink-install --packages-select ${PACKAGES_SELECT}
-        else
-            echo -e "  colcon build --symlink-install"
-            echo -e "========================================"
-            colcon build --symlink-install
-        fi
+        echo -e "  ros2 interface show ${MSG_NAME}"
+        echo -e "========================================"
+        ros2 interface show ${MSG_NAME}
     else
         echo -e "${COLOR_ON_RED}========================================${COLOR_OFF}"
         echo -e "${COLOR_ON_RED}  Could not find the folder : ${WORK_FOLDER}${COLOR_OFF}"
