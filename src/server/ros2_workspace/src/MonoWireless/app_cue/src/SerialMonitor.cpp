@@ -13,7 +13,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 // ==================================================== //
-#define SERIALMONITOR_DEBUG 1
+#define SERIALMONITOR_DEBUG 0
 /* **************************************************** */
 #if SERIALMONITOR_DEBUG
 #define debug_printf(...) printf(__VA_ARGS__)
@@ -91,7 +91,6 @@ void SerialMonitor::device_open(void)
                        this->dev_bits,
                        this->textParity(this->dev_parity).c_str(),
                        this->dev_stop_bits);
-
         } else {
             this->dev_connected = false;
         }
@@ -172,7 +171,6 @@ bool SerialMonitor::device_read(std::string *outdata, bool *one_sentence)
                     if (0 != read_size) {
                         refill[read_size++] = '\n';
                         refill[read_size]   = '\0';
-                        // this->received(refill, read_size, indention);
                         *outdata = refill;
                         result   = true;
                     }

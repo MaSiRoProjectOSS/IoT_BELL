@@ -29,9 +29,11 @@ private:
     int convert_sensor_PAL(char *data, int start_index, int size, twelite_interfaces::msg::TweliteAppCueMsg *msg);
     int convert_sensor_TAG(char *data, int start_index, int size, twelite_interfaces::msg::TweliteAppCueMsg *msg);
 
+    int byte_to_int(char value1, char value2);
     /* **************************************************** */
     // debug
     /* **************************************************** */
     void DebugPrint(twelite_interfaces::msg::TweliteAppCueMsg msg);
+    void GetWakeupFactorName(int value0, int value1, int value2);
 };
 #endif

@@ -11,15 +11,26 @@
 #include "ConverterAppCue.h"
 
 // ==================================================== //
-#define CONVERTERAPPCUE_DEBUG 1
+#define CONVERTERAPPCUE_LOG     1
+#define CONVERTERAPPCUE_DEBUG   1
+#define CONVERTERAPPCUE_VERBOSE 0
 /* **************************************************** */
-#if CONVERTERAPPCUE_DEBUG
 #include <cstdio>
+#if CONVERTERAPPCUE_VERBOSE
+#define verbose_printf(...) printf(__VA_ARGS__)
+#else
+#define verbose_printf(...)
+#endif
+#if CONVERTERAPPCUE_DEBUG
 #define debug_printf(...) printf(__VA_ARGS__)
 #else
 #define debug_printf(...)
 #endif
+#if CONVERTERAPPCUE_LOG
 #define log_printf(...) printf(__VA_ARGS__)
+#else
+#define log_printf(...)
+#endif
 // ==================================================== //
 
 //////////////////////////////////////////////////////////
@@ -43,10 +54,10 @@ ConverterAppCue::~ConverterAppCue() {}
 int ConverterAppCue::convert_information(char *data, int start_index, int size, twelite_interfaces::msg::TweliteAppCueMsg *msg)
 {
     if (start_index < size) {
-        msg->router_sid.data = (data[0] << 24u) + (data[1] << 16u) + (data[2] << 8u) + (data[3]);
-        msg->lqi.data        = (((7.0 * data[4]) - 1970.0) / 20.0);
-        //msg->header->seq          = (data[5] << 8u) + (data[6]); // seq in not missing for ROS2
-        msg->end_device_sid.data = (data[7] << 24u) + (data[8] << 16u) + (data[9] << 8u) + (data[10]);
+        msg->routers_id.data     = (data[0] << 24u) + (data[1] << 16u) + (data[2] << 8u) + (data[3]);
+        msg->lqi.data            = (((7.0 * data[4]) - 1970.0) / 20.0);
+        msg->seq.data            = (data[5] << 8u) + (data[6]);
+        msg->end_devices_id.data = (data[7] << 24u) + (data[8] << 16u) + (data[9] << 8u) + (data[10]);
         msg->logical_id.data     = data[11];
     }
     return 11;
@@ -73,13 +84,17 @@ int ConverterAppCue::convert_sensor_PAL(char *data, int start_index, int size, t
 {
     int index = start_index;
     if (start_index < size) {
-        debug_printf("==== PAL[%d]\n", data[index]);
+        bool flag_sampling = false;
+        double accel_x     = 0;
+        double accel_y     = 0;
+        double accel_z     = 0;
+        verbose_printf("==== PAL[%d]\n", data[index]);
         msg->pal.data     = data[index] & 0x1F;
         int version       = (data[index] & 0xE0) >> 5;
         msg->version.data = ((version & 0x01) << 2) | (version & 0x02) | ((version & 0x04) >> 2);
         index++;
         int sensor_num = data[index++];
-        debug_printf("==== sensor_num[%d]\n", sensor_num);
+        verbose_printf("==== sensor_num[%d]\n", sensor_num);
         for (int i = 0; i < sensor_num; i++) {
             //int  __Type     = None;  // データの型を入れる
             int __ErrCode  = 0;
@@ -94,67 +109,91 @@ int ConverterAppCue::convert_sensor_PAL(char *data, int start_index, int size, t
 #if 0
             switch (__Type) {
                 case 0:
-                    debug_printf("  --- Char\n");
+                    verbose_printf("  --- Char\n");
                     break;
                 case 1:
-                    debug_printf("  --- Short\n");
+                    verbose_printf("  --- Short\n");
                     break;
                 case 2:
-                    debug_printf("  --- Long\n");
+                    verbose_printf("  --- Long\n");
                     break;
                 default:
-                    debug_printf("  --- Variable\n");
+                    verbose_printf("  --- Variable\n");
                     break;
             }
 #endif
-            debug_printf("  --- index[%d->%d] 0x%02x%02x%02x%02x\n", index, index + __DataNum, __DataType, __SensorID, __ExByte, __DataNum);
-            debug_printf("  --- ");
+            verbose_printf("  --- index[%d->%d] 0x%02x%02x%02x%02x\n", index, index + __DataNum, __DataType, __SensorID, __ExByte, __DataNum);
+            verbose_printf("  --- ");
             for (int k = 0; k < __DataNum; k++) {
-                debug_printf("%02X", data[index + k]);
+                verbose_printf("%02X", data[index + k]);
             }
-            debug_printf("\n");
+            verbose_printf("\n");
             switch (__SensorID) {
                 case 0x00:
-                    debug_printf(" ==== %s\n", "Magnet");
+                    verbose_printf(" ==== %s\n", "Magnet");
                     msg->magnet.data = data[index] & 0x7F;
                     break;
                 case 0x01:
-                    debug_printf(" ==== %s\n", "Temperature");
+                    verbose_printf(" ==== %s\n", "Temperature");
                     __Div = 100.0;
                     // TODO : add message data
                     break;
                 case 0x02:
-                    debug_printf(" ==== %s\n", "Humidity");
+                    verbose_printf(" ==== %s\n", "Humidity");
                     __Div = 100.0;
                     // TODO : add message data
                     break;
                 case 0x03:
-                    debug_printf(" ==== %s\n", "Illuminance");
+                    verbose_printf(" ==== %s\n", "Illuminance");
                     __Div = 100.0;
                     // TODO : add message data
                     break;
                 case 0x04:
-                    debug_printf(" ==== %s\n", "Acceleration");
-                    msg->accel_sampling.data = 0;
-                    /*
-                    msg->accel_x.data        = 0;
-                    msg->accel_y.data        = 0;
-                    msg->accel_z.data        = 0;
-                    */
+                    verbose_printf(" ==== %s\n", "Acceleration");
+                    accel_x = this->byte_to_int((data[index]), (data[index + 1])) / 1000.0;
+                    accel_y = this->byte_to_int((data[index + 2]), (data[index + 3])) / 1000.0;
+                    accel_z = this->byte_to_int((data[index + 4]), (data[index + 5])) / 1000.0;
+                    verbose_printf("      %5.2f, %5.2f, %5.2f\n", accel_x, accel_y, accel_z);
+
+                    msg->accel.linear.x = (msg->accel.linear.x + accel_x) / 2.0;
+                    msg->accel.linear.y = (msg->accel.linear.y + accel_y) / 2.0;
+                    msg->accel.linear.z = (msg->accel.linear.z + accel_z) / 2.0;
+
+                    if (false == flag_sampling) {
+                        flag_sampling = true;
+                        int freq_idx  = __ExByte >> 5;
+                        switch (freq_idx) {
+                            case 4:
+                                msg->accel_sampling.data = 380;
+                                break;
+                            case 3:
+                                msg->accel_sampling.data = 190;
+                                break;
+                            case 2:
+                                msg->accel_sampling.data = 100;
+                                break;
+                            case 1:
+                                msg->accel_sampling.data = 50;
+                                break;
+                            default:
+                                msg->accel_sampling.data = 25;
+                                break;
+                        }
+                    }
                     break;
                 case 0x05:
-                    debug_printf(" ==== %s\n", "EventID");
+                    verbose_printf(" ==== %s\n", "EventID");
                     msg->event_id.data = data[index];
                     break;
                 case 0x30:
                     if (0x08 == __ExByte) {
-                        debug_printf(" ==== %s\n", "Power");
+                        verbose_printf(" ==== %s\n", "Power");
                         msg->power.data = ((data[index] << 8) + (data[index + 1]));
                     } else if (0x00 == __ExByte) {
                         debug_printf(" ==== %s\n", "ADC");
-                        //msg->adc.data = ((data[index] << 8) + (data[index + 1]));
+                        //msg->adc0.data = ((data[index] << 8) + (data[index + 1]));
                     } else {
-                        debug_printf(" ==== %s%d\n", "ADC", __ExByte);
+                        verbose_printf(" ==== %s%d\n", "ADC", __ExByte);
                         msg->adc.data = ((data[index] << 8) + (data[index + 1]));
                     }
                     break;
@@ -168,6 +207,9 @@ int ConverterAppCue::convert_sensor_PAL(char *data, int start_index, int size, t
                     break;
                 case 0x34:
                     debug_printf(" ==== %s\n", "WakeupFactor");
+#if CONVERTERAPPCUE_DEBUG
+                    this->GetWakeupFactorName(data[index], data[index + 1], data[index + 2]);
+#endif
                     // TODO : add message data
                     break;
                 default:
@@ -192,13 +234,14 @@ int ConverterAppCue::convert_sensor_TAG(char *data, int start_index, int size, t
 twelite_interfaces::msg::TweliteAppCueMsg ConverterAppCue::Convert(const char *data, int size)
 {
     twelite_interfaces::msg::TweliteAppCueMsg msg;
+    msg.header.set__stamp(rclcpp::Clock().now());
 
     int refill_size = 0;
     char temp[0x0FFF];
     char temp1[3];
     temp1[2]        = '\0';
     bool flag_start = false;
-    debug_printf("%s() : Convert\n", __func__);
+    verbose_printf("%s() : Convert\n", __func__);
 
     for (int i = 0; i < size; i++) {
         if ('\n' == data[i]) {
@@ -221,10 +264,17 @@ twelite_interfaces::msg::TweliteAppCueMsg ConverterAppCue::Convert(const char *d
         int start_index = this->convert_information(temp, 0, refill_size, &msg);
         this->convert_sensor(temp, start_index, refill_size, &msg);
     }
-#if CONVERTERAPPCUE_DEBUG
+#if CONVERTERAPPCUE_LOG
     this->DebugPrint(msg);
 #endif
     return msg;
+}
+
+int ConverterAppCue::byte_to_int(char value1, char value2)
+{
+    int16_t buf = (value1 << 8) + (value2);
+    int result  = (int)buf;
+    return result;
 }
 
 /* **************************************************** */
@@ -234,15 +284,14 @@ void ConverterAppCue::DebugPrint(twelite_interfaces::msg::TweliteAppCueMsg msg)
 {
     log_printf("==============\n");
     log_printf("LogicalID    : %d\n", msg.logical_id.data);
-    log_printf("Header       : \n");
-    //    log_printf("       seq   : %d\n", msg.header.seq);
-    log_printf("EndDeviceSID : %08X\n", msg.end_device_sid.data);
-    switch (msg.router_sid.data) {
+    log_printf("Seq          : %d\n", msg.seq.data);
+    log_printf("EndDevicesID : %08X\n", msg.end_devices_id.data);
+    switch (msg.routers_id.data) {
         case 0x80000000u:
             log_printf("RouterSID    : %s\n", "No Relay");
             break;
         default:
-            log_printf("RouterSID    : %08X\n", msg.router_sid.data);
+            log_printf("RouterSID    : %08X\n", msg.routers_id.data);
             break;
     }
     switch (msg.sensor.data) {
@@ -372,8 +421,64 @@ void ConverterAppCue::DebugPrint(twelite_interfaces::msg::TweliteAppCueMsg msg)
             break;
     }
     log_printf("Accel\n");
-    log_printf("    X        : -- [mG]\n");
-    log_printf("    Y        : -- [mG]\n");
-    log_printf("    Z        : -- [mG]\n");
-    log_printf("    Sampling : -- [Hz]\n");
+    log_printf("    X        : %5.2f [G]\n", msg.accel.linear.x);
+    log_printf("    Y        : %5.2f [G]\n", msg.accel.linear.y);
+    log_printf("    Z        : %5.2f [G]\n", msg.accel.linear.z);
+    log_printf("    Sampling : %d [Hz]\n", msg.accel_sampling.data);
+}
+void ConverterAppCue::GetWakeupFactorName(int value0, int value1, int value2)
+{
+    std::string text0 = ""; // 'PacketID_%d' value0
+    std::string text1;
+    std::string text2;
+    switch (value1) {
+        case 0x00:
+            text1 = "Magnet";
+            break;
+        case 0x01:
+            text1 = "Temperature";
+            break;
+        case 0x02:
+            text1 = "Humidity";
+            break;
+        case 0x03:
+            text1 = "Illuminance";
+            break;
+        case 0x04:
+            text1 = "Acceleration";
+            break;
+        case 0x31:
+            text1 = "DIO";
+            break;
+        case 0x35:
+            text1 = "Timer";
+            break;
+        default:
+            text1 = "unknow";
+            break;
+    }
+    switch (value2) {
+        case 0:
+            text2 = "Occurred_Event";
+            break;
+        case 1:
+            text2 = "Changed_Value";
+            break;
+        case 2:
+            text2 = "Upper_then_Threshold";
+            break;
+        case 3:
+            text2 = "Lower_Then_Threshold";
+            break;
+        case 4:
+            text2 = "Within_Threshold";
+            break;
+        default:
+            text2 = "unknow";
+            break;
+    }
+    debug_printf("WakeupFactor\n");
+    debug_printf("  PacketID_%d\n", value0);
+    debug_printf("  %s\n", text1.c_str());
+    debug_printf("  %s\n", text2.c_str());
 }

@@ -25,7 +25,8 @@ public:
 private:
     void timer_callback();
 
-    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher;
+    rclcpp::Publisher<twelite_interfaces::msg::TweliteAppCueMsg>::SharedPtr publisher;
+    rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared("TWELITE_app_cue");
 
     rclcpp::TimerBase::SharedPtr timer;
     SerialMonitor monitor;
@@ -34,8 +35,8 @@ private:
     std::chrono::milliseconds tp_msec{ 250 };
 
     const std::string TOPIC_NAME = "TWELITE_app_cue_topic";
-    const int BUFFER_SIZE        = 50;
-    const int TIMEOUT_COUNTER    = (3000 / 250);
-    int counter                  = 0;
+    rclcpp::QoS QOS{ 255 };
+    const int TIMEOUT_COUNTER = (3000 / 250);
+    int timeout_count         = 0;
 };
 #endif

@@ -52,9 +52,10 @@ uint8 TWELITE_SENSOR_BUTTON          = 	254
 ####################################################
 std_msgs/Header     header
 
+std_msgs/UInt16         seq
 std_msgs/UInt32         logical_id
-std_msgs/UInt32         end_device_sid
-std_msgs/UInt32         router_sid
+std_msgs/UInt32         end_devices_id
+std_msgs/UInt32         routers_id
 std_msgs/UInt32         version
 std_msgs/UInt32         pal
 std_msgs/UInt8          sensor
@@ -67,6 +68,4 @@ std_msgs/UInt32         power
 std_msgs/UInt32         adc
 
 std_msgs/UInt32         accel_sampling
-geometry_msgs/Accel     accel_x
-geometry_msgs/Accel     accel_y
-geometry_msgs/Accel     accel_z
+geometry_msgs/Accel     accel
