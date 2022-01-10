@@ -1,31 +1,39 @@
+/**
+ * @file TWELITE_app_cue.h
+ * @brief TWELITE® CUE converter
+ * @date 2022-01-08
+ *
+ * @copyright Copyright (c) 2022-.
+ *               MaSiRo Project.
+ *
+ */
 
-#ifndef _APP_CUE_H_
-#define _APP_CUE_H_
+#ifndef _TWELITE_APP_CUE_H_
+#define _TWELITE_APP_CUE_H_
 
-#include "serial_monitor.h"
+#include "ConverterAppCue.h"
+#include "SerialMonitor.h"
+#include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/string.hpp"
 
-class TWELITE_app_cue : SerialMonitor, rclcpp::Node {
+#include <chrono>
+
+class TWELITE_app_cue : public rclcpp::Node {
 public:
-    TWELITE_app_cue() : Node("node_TWELITE_app_cue")
-    {
-        publisher_ = this->create_publisher<std_msgs::msg::String>("TWELITE_app_cue_topic", 10);
-        timer_     = this->create_wall_timer(500ms, std::bind(&TWELITE_app_cue::timer_callback, this));
-    }
+    TWELITE_app_cue();
 
 private:
-    void timer_callback()
-    {
-     this->   device_read();
-    }
-    void received(std::string data)
-    {
-        auto message = std_msgs::msg::String();
-        message.data = data;
-        RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
-        publisher_->publish(message);
-    }
+    void timer_callback();
 
-    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
-    rclcpp::TimerBase::SharedPtr                        timer_;
+    rclcpp::Publisher<twelite_interfaces::msg::TweliteAppCueMsg>::SharedPtr publisher;
+
+    rclcpp::TimerBase::SharedPtr timer;
+    SerialMonitor monitor;
+    ConverterAppCue appcue;
+
+    std::chrono::milliseconds tp_msec{ 250 };
+
+    const int TIMEOUT_COUNTER = (3000 / 250);
+    int timeout_count         = 0;
 };
 #endif

@@ -7,7 +7,7 @@
 #   https://clang.llvm.org/docs/ClangFormatStyleOptions.html
 #
 # clang-format version 10.0.0.4
-#  - MaSiRo Project. 1.10.0.0.4
+#  - MaSiRo Project. 1.10.0.0.5
 #
 ---
 UseCRLF : false
@@ -21,7 +21,7 @@ AlignAfterOpenBracket : Align
 AlignConsecutiveMacros : true
 AlignConsecutiveAssignments : true
 AlignEscapedNewlines : Right
-AlignConsecutiveDeclarations : true
+AlignConsecutiveDeclarations : false
 AlignTrailingComments : true
 
 AllowAllArgumentsOnNextLine : false

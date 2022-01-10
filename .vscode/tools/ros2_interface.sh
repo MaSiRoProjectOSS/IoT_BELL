@@ -8,15 +8,19 @@ COLOR_OFF="\e[m"
 ## ================================
 
 WORK_FOLDER=$1
+MSG_NAME=$2
 
-if [ "ros_noetic" != "ros_${ROS_DISTRO}" ];
+if [ "ros_galactic" != "ros_${ROS_DISTRO}" ];
 then
-    if [ "ros_melodic" != "ros_${ROS_DISTRO}" ];
+    if [ "ros_foxy" != "ros_${ROS_DISTRO}" ];
     then
-        echo -e "${COLOR_ON_RED}========================================${COLOR_OFF}"
-        echo -e "${COLOR_ON_RED}  Not support Distributions : ${ROS_DISTRO}.${COLOR_OFF}"
-        echo -e "${COLOR_ON_RED}========================================${COLOR_OFF}"
-        exit 1
+        if [ "ros_rolling" != "ros_${ROS_DISTRO}" ];
+        then
+            echo -e "${COLOR_ON_RED}========================================${COLOR_OFF}"
+            echo -e "${COLOR_ON_RED}  Not support Distributions : ${ROS_DISTRO}.${COLOR_OFF}"
+            echo -e "${COLOR_ON_RED}========================================${COLOR_OFF}"
+            exit 1
+        fi
     fi
 fi
 
@@ -26,12 +30,16 @@ then
     then
         cd ${WORK_FOLDER}
 
+        source /usr/share/colcon_cd/function/colcon_cd.sh
+        export _colcon_cd_root=/opt/ros/${ROS_DISTRO}/
+        source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
         source /opt/ros/${ROS_DISTRO}/setup.bash
+        source ${WORK_FOLDER}/install/setup.bash
+
         echo -e "========================================"
-        echo -e "Folder : ${WORK_FOLDER}"
+        echo -e "  ros2 interface show ${MSG_NAME}"
         echo -e "========================================"
-        source ${WORK_FOLDER}/devel/setup.bash
-        roscore
+        ros2 interface show ${MSG_NAME}
     else
         echo -e "${COLOR_ON_RED}========================================${COLOR_OFF}"
         echo -e "${COLOR_ON_RED}  Could not find the folder : ${WORK_FOLDER}${COLOR_OFF}"

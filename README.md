@@ -15,14 +15,9 @@ rectangle outside_the_store as "店外" {
     actor actor_enter as "入店したいお客"
     frame tablet_side as "Tablet" {
         node Panel as "タッチパネル"
-        node Raspberry as "Raspberry Pi 4"
-        node Camera as "カメラ"
-    }
-    frame tablet_side as "Tablet" {
-        node Panel as "タッチパネル"
         node Raspberry as "タブレット\nRaspberry Pi"
-        node Camera as "カメラ"
     }
+    node QRCodeReader as "QRコード\nリーダー"
 
 }
 rectangle inside_the_store as "店内" {
@@ -48,10 +43,11 @@ actor_order --> TWELITE_CUE
 TWELITE_CUE --> TWELITE_MONOSTICK
 
 actor_enter <-- Panel : 状態の通知
-actor_enter --> Camera : QRコードの提示
+actor_enter --> QRCodeReader : QRコードの提示
+QRCodeReader --> Raspberry : 読み取り\nデータ
+
 Panel <-- Raspberry
-TWELITE_MONOSTICK --> server
-Camera --> Raspberry
+TWELITE_MONOSTICK --> server : "TWELITE® CUE\nのデータ"
 
 cast <--> server
 
@@ -86,7 +82,7 @@ server <--> cloud
 
 ## 特記事項
 
-本システムは**メイドロボカフェ**を運用するためにROS2をプラットフォームにして構築している。
+本システムは**メイドロボカフェ**を運用するためにROSをプラットフォームにして構築している。
 
 
 ## License
