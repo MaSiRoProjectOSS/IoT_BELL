@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+  <group ns="masiro">
+    <group ns="system">
+      <node pkg="twelite_app_cue" type="twelite_app_cue_node" name="twelite_app_cue_node" output="screen" respawn="true">
+      </node>
+      <node pkg="task_manager" type="mental_todo_list_node" name="mental_todo_list_node" output="screen" respawn="true">
+      </node>
+    </group>
+  </group>
+
+</launch>

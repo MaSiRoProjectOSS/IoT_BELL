@@ -1,12 +1,8 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(twelite_app_cue)
-
-set(CMAKE_BUILD_TYPE "RELEASE")
-set(ROS_BUILD_TYPE Release)
+project(task_manager)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-#add_compile_options(-std=gnu++11)
-add_compile_options(-O3)
+# add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -14,8 +10,9 @@ add_compile_options(-O3)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
-  geometry_msgs
   std_msgs
+  geometry_msgs
+  sensor_msgs
   twelite_interfaces
 )
 
@@ -110,10 +107,13 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
-#  LIBRARIES app_cue
+#  INCLUDE_DIRS include
+#  LIBRARIES convert_mmd
   CATKIN_DEPENDS
+    geometry_msgs
+    sensor_msgs
     roscpp
+    rospy
     std_msgs
     twelite_interfaces
 #  DEPENDS system_lib
@@ -132,38 +132,33 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/app_cue.cpp
+#   src/${PROJECT_NAME}/convert_mmd.cpp
 # )
-
-## Declare a C++ executable
-## With catkin_make all packages are built within a single CMake context
-## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_node
-  src/app_cue_node.cpp
-  src/ConverterAppCue.cpp
-  src/SerialMonitor.cpp
-)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-add_dependencies(${PROJECT_NAME}_node
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
-  ${catkin_EXPORTED_TARGETS}
+# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+## Declare a C++ executable
+## With catkin_make all packages are built within a single CMake context
+## The recommended prefix ensures that target names across packages don't collide
+add_executable(mental_todo_list_node
+  src/mental_todo_list_node.cpp
 )
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
+# set_target_properties(mental_todo_list_node PROPERTIES OUTPUT_NAME node PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(mental_todo_list_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME}_node
+target_link_libraries(mental_todo_list_node
   ${catkin_LIBRARIES}
 )
 
@@ -183,7 +178,7 @@ target_link_libraries(${PROJECT_NAME}_node
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
-# install(TARGETS ${PROJECT_NAME}_node
+# install(TARGETS mental_todo_list_node
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
@@ -214,7 +209,7 @@ target_link_libraries(${PROJECT_NAME}_node
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_app_cue.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_convert_mmd.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

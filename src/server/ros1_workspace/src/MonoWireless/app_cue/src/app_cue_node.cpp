@@ -7,23 +7,24 @@
  *               MaSiRo Project.
  *
  */
-#include "AppCue.h"
+#include "../include/twelite_app_cue/config_twelite_app_cue.h"
+#include "ConverterAppCue.h"
 
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 
-#define TOPIC_NAME_TWELITE_APP_CUE "TWELITE_app_cue"
+#define NAME_TWELITE_APP_CUE "TWELITE_app_cue"
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, TOPIC_NAME_TWELITE_APP_CUE);
+    ros::init(argc, argv, NAME_TWELITE_APP_CUE);
     ros::NodeHandle n;
     ros::NodeHandle pnh("~");
     printf("===============================================================\n");
-    ROS_INFO(" start : %s", TOPIC_NAME_TWELITE_APP_CUE);
+    ROS_INFO(" start : %s[device:%s]", NAME_TWELITE_APP_CUE, TWELITE::app_cue::CONFIG_TWELITE_APP_DEVICE_NAME.c_str());
     printf("===============================================================\n");
     ros::Rate loop_rate(1); // 1Hz
-    AppCue    app;
+    AppCue app;
 
     app.Run(&n);
 
@@ -37,7 +38,7 @@ int main(int argc, char *argv[])
 #endif
 
     printf("===============================================================\n");
-    ROS_INFO(" shutdown : %s", TOPIC_NAME_TWELITE_APP_CUE);
+    ROS_INFO(" shutdown : %s", NAME_TWELITE_APP_CUE);
     printf("===============================================================\n");
     return 0;
 }

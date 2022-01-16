@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>twelite_app_cue</name>
+  <name>twelite_interfaces</name>
   <version>0.0.1</version>
-  <description>MonoWireless Package - TWELITER CUE converter</description>
+  <description>MonoWireless Package - TWELITE Interfaces</description>
   <maintainer email="masiro.to.akari@gmail.com">Master_Akari</maintainer>
   <license>MIT License</license>
   <url type="website">https://github.com/MaSiRo-Project-OSS/TWELITE_for_ROS</url>
@@ -36,25 +36,22 @@
 
   <build_depend>std_msgs</build_depend>
   <build_depend>geometry_msgs</build_depend>
-  <build_depend>twelite_interfaces</build_depend>
 
   <build_depend>message_generation</build_depend>
 
   <!-- build_export_depend settings -->
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>rospy</build_export_depend>
-  <build_export_depend>twelite_interfaces</build_export_depend>
 
-  <build_export_depend>geometry_msgs</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
+  <build_export_depend>geometry_msgs</build_export_depend>
 
   <!-- exec_depend settings -->
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
-  <exec_depend>twelite_interfaces</exec_depend>
 
-  <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
 
   <exec_depend>message_runtime</exec_depend>
 
