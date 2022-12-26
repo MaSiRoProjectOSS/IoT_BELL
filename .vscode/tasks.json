@@ -1,0 +1,72 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "ROS2 : colcon : server : ALL",
+            "type": "shell",
+            "command": "${workspaceFolder}/.vscode/tools/ros2_build.sh",
+            "args": [
+                "${workspaceFolder}/src/server/ros2_workspace"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "ROS2 : colcon : server : twelite_app_cue",
+            "type": "shell",
+            "command": "${workspaceFolder}/.vscode/tools/ros2_build.sh",
+            "args": [
+                "${workspaceFolder}/src/server/ros2_workspace",
+                "twelite_app_cue"
+            ]
+        },
+        {
+            "label": "ROS2 : colcon : server : twelite_interfaces",
+            "type": "shell",
+            "command": "${workspaceFolder}/.vscode/tools/ros2_build.sh",
+            "args": [
+                "${workspaceFolder}/src/server/ros2_workspace",
+                "twelite_interfaces"
+            ]
+        },
+        {
+            "label": "ROS2 : run : TWELITE_app_cue",
+            "type": "shell",
+            "command": "${workspaceFolder}/.vscode/tools/ros2_run.sh",
+            "args": [
+                "${workspaceFolder}/src/server/ros2_workspace",
+                "twelite_app_cue",
+                "twelite_app_cue_node"
+            ]
+        },
+        {
+            "label": "ROS2 : interface : TWELITE_app_cue",
+            "type": "shell",
+            "command": "${workspaceFolder}/.vscode/tools/ros2_interface.sh",
+            "args": [
+                "${workspaceFolder}/src/server/ros2_workspace",
+                "twelite_app_cue/msg/TweliteAppCueMsg"
+            ]
+        },
+        {
+            "label": "ROS1 : catkin_make",
+            "type": "shell",
+            "command": "${workspaceFolder}/.vscode/tools/ros1_build.sh",
+            "args": [
+                "${workspaceFolder}/src/server/ros1_workspace"
+            ]
+        },
+        {
+            "label": "ROS1 : run : roscore",
+            "type": "shell",
+            "command": "${workspaceFolder}/.vscode/tools/ros1_start.sh",
+            "args": [
+                "${workspaceFolder}/src/server/ros1_workspace"
+            ]
+        }
+    ]
+}

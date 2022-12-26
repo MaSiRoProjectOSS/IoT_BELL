@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/src/server/ros1_workspace/devel/include/**",
+                "${workspaceFolder}/src/server/ros2_workspace/**",
+                "${workspaceFolder}/src/server/ros2_workspace/src/MonoWireless/app_cue/src",
+                "${workspaceFolder}/src/server/ros2_workspace/install/twelite_interfaces/include",
+                "/opt/ros/galactic/include/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-arm64"
+        }
+    ],
+    "version": 4
+}
